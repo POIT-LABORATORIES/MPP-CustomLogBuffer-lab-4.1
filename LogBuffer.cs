@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace CustomLogBuffer
 {
@@ -18,10 +19,17 @@ namespace CustomLogBuffer
             get;
         }
 
-        public LogBuffer(int num)
+        public LogBuffer(int bufferSize)
         {
-            MaxBufferSize = num;
+            MaxBufferSize = bufferSize;
             _blockingCollection = new BlockingCollection<string>(MaxBufferSize);
+        }
+
+        public LogBuffer(int bufferSize, Double timerInterval)
+        {
+            MaxBufferSize = bufferSize;
+            _blockingCollection = new BlockingCollection<string>(MaxBufferSize);
+            
         }
 
         public void Add(string item)
@@ -60,6 +68,11 @@ namespace CustomLogBuffer
                     }
                 }
             }
+        }
+
+        private void AutoWriteToFile(Double timerInterval)
+        {
+            //var timer = new Timer();
         }
 
         public void CompleteJournaling()
