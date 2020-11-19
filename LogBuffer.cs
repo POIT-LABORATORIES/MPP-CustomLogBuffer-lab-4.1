@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -14,6 +12,7 @@ namespace CustomLogBuffer
         //private ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
         //private BlockingCollection<string> _blockingCollection = new BlockingCollection<string>();
         private BlockingCollection<string> _blockingCollection;
+        private const string LogFilePath = "@./LogFile.txt";
         private int MaxBufferSize
         {
             get;
@@ -42,7 +41,7 @@ namespace CustomLogBuffer
                 var writeToFileTask = Task.Run(WriteToFile);
                 Task.WaitAll(writeToFileTask);
             }
-            catch (ObjectDisposedException e)
+            catch (ObjectDisposedException)
             {
                 Console.WriteLine("The blocking collection has been disposed of, cannot add any more messages!");
                 throw;
@@ -57,7 +56,7 @@ namespace CustomLogBuffer
         private void WriteToFile()
         {
             Console.WriteLine("WRITING TO FILE");
-            using (StreamWriter streamWriter = new StreamWriter(@"./LogFile.txt", true))
+            using (StreamWriter streamWriter = new StreamWriter(LogFilePath, true))
             {
                 while (_blockingCollection.Count != 0)
                 {
@@ -78,7 +77,7 @@ namespace CustomLogBuffer
         public void CompleteJournaling()
         {
             _blockingCollection.CompleteAdding();
-            _blockingCollection.Dispose(); // МОЖЕТ ВОЗНИКНУТЬ ОШИБКА!
+            _blockingCollection.Dispose(); 
         }
     }
 }
